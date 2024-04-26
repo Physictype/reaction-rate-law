@@ -4,9 +4,84 @@
 
     </head>
     <body>
-        <div>
-            <button class="playpause">Play</button>
-            <canvas class="reactionCanvas" width="350" height="200" style="border:1px solid #000000;"></canvas>
+        <div class="particleSimulator">
+            <!--
+                {"atoms":[
+                    {
+                        "radius":8,
+                        "color":"blue"
+                    },
+                    {
+                        "radius":10,
+                        "color":"red"
+                    }
+                ],"particles":[
+                    {"components":
+                        [{
+                            "id": 0,
+                            "offset": [-4,0]
+                        },
+                        {
+                            "id": 1,
+                            "offset": [4,0]
+                        }],"amount":10
+                    },
+                    {"components":
+                        [{
+                            "id": 1,
+                            "offset": [-18,-6]
+                        },
+                        {
+                            "id": 0,
+                            "offset": [-6,6]
+                        },
+                        {
+                            "id": 0,
+                            "offset": [6,-6]
+                        },
+                        {
+                            "id": 1,
+                            "offset": [18,6]
+                        }],"amount":0
+                    },
+                    {"components":
+                        [{
+                            "id": 1,
+                            "offset": [-5,0]
+                        },
+                        {
+                            "id": 1,
+                            "offset": [5,0]
+                        }],"amount":5
+                    },
+                    {"components":
+                        [{
+                            "id": 0,
+                            "offset": [0,0]
+                        },
+                        {
+                            "id": 1,
+                            "offset": [8.5,-8.5]
+                        },
+                        {
+                            "id": 1,
+                            "offset": [-8.5,-8.5]
+                        }],"amount":0
+                    }
+                ],"reactions":[
+                    {
+                        "reagents":[0,0],
+                        "reactants":[1]
+                    },
+                    {
+                        "reagents":[1,2],
+                        "reactants":[3,3]
+                    }
+                ],"canvas": {
+                    "width": 300,
+                    "height": 200
+                }}
+            -->
         </div>
         <script src="script.js"></script>
     </body>

@@ -4,26 +4,26 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
+        <h3>Reactions and Rate Laws</h3>
         Consider a hypothetical reaction of "atoms" A and B to form AB. How do these two molecules react? According to Collision Theory, the two atoms have to interact, i.e. collide, to react.
         Although, like other models, collision theory is not a totally accurate theory, it does tell us valuable things.
-
+        <br><br>
         One example of this is how increasing the amount of some reactant increases the speed of the reaction, which makes sense intuitively.
         Collision theory explains how the rate of the reaction relates linearly to the amount of A currently in the system and similarly with B.
-
+        <br><br>
         To understand this, suppose there are \(x\) particles (atoms or molecules) of A and \(y\) particles of B. Each particles of A has some probability of hitting some particles of B.
         The particles that are chosen really don't matter, so the probabilities are all the same, say \(p\). Then the expected number of collisions of a selected atom of A with any particles of B is \(py\). If we change \(x\) to some \(x'\), the expected number will still be \(py\) for some particles of A.
         Ignoring collisions between like particles, we see that the average number of collisions is \(pxy\).
-
+        <br><br>
         If we are trying to find the rate of a reaction like 2AB forming A<sub>2</sub>B<sub>2</sub>, we have to be a little careful. If there are \(x\) particles, each particle can collide with \(x-1\) of the other ones. However, \(x(x-1)\) overcounts the number of collisions by two because switching the roles of two particles doesn't change anything.
         We can ignore this for propotionality, but it is important to note.
         Thus the rate law is proportional to \(x(x-1)\). When \(x\) is big, \(x\approx x-1\), so \(x(x-1)\approx x^2\).
-
+        <br><br>
         When dealing with large quantities of atoms, we use concentrations for the rate laws, written \([A]\) if A is a particle. Then the rate law for \(c_1[A_1]+\dots+c_n[A_n]\to d_1[B_1]+\dots+d_m[B_m]\), if it is elementary, is
         $$k[A_1]^{c_1}\cdot\cdots\cdot[A_n]^{c_n}.$$
-        
         These laws are confirmed by expiriments. They have little inaccuracies, of course.
 
-        <br>
+        <br><br>
         The reason the rate law only works for "elementary" reactions, which are reactions that are not composed of multiple reactions happening, is because the rate laws can sometimes differ in either case.
         An example of a reaction that is not elementary is \(O_2+2NO\to 2NO_2\). It is actually made up of two component reactions: \(2NO\to N_2O_2\) and \(N_2O_2+O_2\to2NO_2\). Here it is in action:
         <div class="particleSimulator">
@@ -169,16 +169,17 @@
             -->
         </div>
         Then
-        \[\frac{[C][D]}{[A][B]}=\frac{k_1}{k_2}\coloneq K_{\mathrm{eq}},\]
-        where the \(\coloneq\) means "defined as."
-        This \(K_{\mathrm{eq}}\) is called the equlibrium constant. Since it is not dependent on the actual concentrations, just the constants for the rate laws, which we have seen must be independent of the concentrations,
+        \[\frac{[C][D]}{[A][B]}=\frac{k_1}{k_2}.\]
+        This ratio is called the equlibrium constant, denoted \(K_{\mathrm{eq}}\). Since it is not dependent on the actual concentrations, just the constants for the rate laws, which we have seen must be independent of the concentrations,
         we can experimentally find some equilibrium constant and use it for other concentrations! For example, if we know three of the concentrations in equilbrium and the equilibrium constant, we know the other concentration.
         If we know the starting concentrations of the reaction and the equilibrium coefficient, we can use the stoicheometry to calculate the equilibrium state that it goes to.
-        
+        <br><br>
         Here is an example of how to do this. Suppose we have a concentration \(x\) of both A and B. Then, if we let \(y\) of the A and B to react, there will be \(x-y\) of A, \(x-y\) of B, \(y\) of C, and \(y\) of D.
         Then the equilibrium constant is \(K=\frac{y^2}{(x-y)^2}\). Knowing \(x\) and \(K\) gives \(y\), so then we know the equlibrium state. If there is some non-one coefficient, we just use the stoicheometry of the reaction.
-        
-        
+        <br><br>
+        Let us see a final use of equilibrium constants. Suppose we have some equilbirium reaction that is currently happening. Then, if we take the form of the equilibrium constant for the current concentrations, i.e., calculate \(\frac{[C][D]}{[A][B]}\) for our example,
+        we form what is called the equilibrium quotient, \(Q\). Now, suppose \(Q < K_{\mathrm{eq}}\). Then, to get to equilibrium, we need to have \(Q=K_{\mathrm{eq}}), so we need \(Q\) to increase. This means either the numerator needs to increase or the denominator needs to decrease.
+        Based on our intuition, we know both must happen if one of them happens. Therefore, in our example, \([C]\) and \([D]\) must increase and \([A]\) and \([B]\) must decrease. Similarly, we can see what will happen to the concentrations if \(K_{\mathrm{eq}} < Q\).
         <script src="script.js"></script>
         <script type="text/javascript" id="MathJax-script" async
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">

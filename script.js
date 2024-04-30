@@ -34,11 +34,13 @@ class MolecularObject {
         this.id = id;
         this.position = position;
         this.velocity = velocity;
+        this.invincible_timer = 0;
     }
     components;
     id;
     position;
     velocity;
+    invincible_timer;
 }
 function randCirc(radius) {
     let angle = Math.random()*2*Math.PI;
@@ -53,6 +55,19 @@ function objectWithAvg(obj1,obj2,components,id) {
 function shiftAtom(atom,shift) {
     return new Atom([atom.position[0]+shift[0],atom.position[1]+shift[1]],atom.radius,atom.color)
 }
+function isColliding(object,other) {
+    for (let i = 0; i < object.components.length; i++) {
+        for (let j = 0; j < other.components.length; j++) {
+            if (sqrDistance([object.components[i].position[0]+object.position[0],
+                            object.components[i].position[1]+object.position[1]],
+                            [other.components[j].position[0]+other.position[0],
+                            other.components[j].position[1]+other.position[1]])<(object.components[i].radius+other.components[j].radius)*(object.components[i].radius+other.components[j].radius)) {
+                                return true;
+                            }
+        }
+    }
+    return false;
+}
 $$(".particleSimulator").forEach((sim) => {
     console.log(getAllComments(sim)[0].replace(/\s/g,''));
     let parameters = JSON.parse(getAllComments(sim)[0].replace(/\s/g,''));
@@ -61,19 +76,23 @@ $$(".particleSimulator").forEach((sim) => {
     parameters.atoms.forEach((atom) => {
         atoms.push(new Atom([0,0],atom.radius,atom.color));
     });
-    let i = 0;
     let CANVASWIDTH = parameters.canvas.width;
     let CANVASHEIGHT = parameters.canvas.height;
-    parameters.particles.forEach((particle) => {
-        let components = [];
-        particle.components.forEach((component) => {
-            components.push(shiftAtom(atoms[component.id],component.offset));
+    function setup() {
+        let i = 0;
+        molecularObjects = [];
+        parameters.particles.forEach((particle) => {
+            let components = [];
+            particle.components.forEach((component) => {
+                components.push(shiftAtom(atoms[component.id],component.offset));
+            })
+            for (let j = 0; j < particle.amount; j++) {
+                molecularObjects.push(new MolecularObject(components,i,[Math.random()*(CANVASWIDTH-20)+10,Math.random()*(CANVASHEIGHT-20)+10],randCirc(Math.random()*10+5)));
+            }
+            i++;
         })
-        for (let j = 0; j < particle.amount; j++) {
-            molecularObjects.push(new MolecularObject(components,i,[Math.random()*(CANVASWIDTH-20)+10,Math.random()*(CANVASHEIGHT-20)+10],randCirc(Math.random()*10+5)));
-        }
-        i++;
-    })
+    }
+    setup();
     let c = document.createElement("canvas");
     c.setAttribute("width",CANVASWIDTH);
     c.setAttribute("height",CANVASHEIGHT);
@@ -81,43 +100,62 @@ $$(".particleSimulator").forEach((sim) => {
     let playButton = document.createElement("button");
     playButton.innerText = "Play";
     playButton.addEventListener("click",() => {
+        console.log(playButton.innerText)
         if (playButton.innerText == "Play") {
             playButton.innerText = "Pause";
-        }
-        if (playButton.innerText == "Pause") {
+        } else if (playButton.innerText == "Pause") {
             playButton.innerText = "Play";
         }
         playing = !playing;
     })
-    sim.appendChild(playButton);
+    let resetButton = document.createElement("button");
+    resetButton.innerText = "Reset";
+    resetButton.addEventListener("click", () => {
+        setup();
+        render();
+    })
+    
     let temperature = document.createElement("input");
     temperature.setAttribute("type","range");
-    sim.appendChild(temperature)
+    
+    let br = document.createElement("br");
+    
     sim.appendChild(c);
+    sim.appendChild(br);
+    sim.appendChild(playButton);
+    sim.appendChild(resetButton);
+    sim.appendChild(temperature)
     temperature.value=10;
-    function reactantWithAvgRand(obj1,obj2,reactant,posRadius,velRadius) {
+    function productWithAvgRand(obj1,obj2,product,posRadius,velRadius) {
         let components = [];
-        parameters.particles[reactant].components.forEach((component) => {
+        parameters.particles[product].components.forEach((component) => {
             components.push(shiftAtom(atoms[component.id],component.offset))
         })
         let randPos = randCirc(posRadius);
         let randVel = randCirc(velRadius);
-        return new MolecularObject(components,reactant,[(obj1.position[0]+obj2.position[0])/2+randPos[0],(obj1.position[1]+obj2.position[1])/2+randPos[1]],[(obj1.velocity[0]+obj2.velocity[0])/2+randVel[0],(obj1.velocity[1]+obj2.velocity[1])/2+randVel[1]])
+        return new MolecularObject(components,product,[(obj1.position[0]+obj2.position[0])/2+randPos[0],(obj1.position[1]+obj2.position[1])/2+randPos[1]],[(obj1.velocity[0]+obj2.velocity[0])/2+randVel[0],(obj1.velocity[1]+obj2.velocity[1])/2+randVel[1]])
     }
     // var c = sim
     let ctx = c.getContext("2d");
-    function render() {
+    let reactionCounts = [];
+    for (let i = 0; i < parameters.reactions.length; i++) {
+        reactionCounts.push(0);
+    }
+    function render(collide) {
         ctx.clearRect(0, 0, c.width, c.height);
         for (let i = 0; i < molecularObjects.length; i++) {
             object = molecularObjects[i]
+            if (object.invincible_timer!=0) {
+                object.invincible_timer -=1;
+            }
             object.components.forEach((component) => {
                 ctx.beginPath();
                 ctx.arc(object.position[0]+component.position[0], object.position[1]+component.position[1], component.radius, 0, 2 * Math.PI);
                 ctx.fillStyle = component.color;
                 ctx.fill();
             })
-            object.position[0] += 1/10*temperature.value/10*object.velocity[0];
-            object.position[1] += 1/10*temperature.value/10*object.velocity[1];
+            object.position[0] += 1/10*temperature.value/5*object.velocity[0];
+            object.position[1] += 1/10*temperature.value/5*object.velocity[1];
             if (object.position[0]>CANVASWIDTH-10) {
                 object.position[0]=CANVASWIDTH-10;
                 object.velocity[0] *= -1;
@@ -139,14 +177,17 @@ $$(".particleSimulator").forEach((sim) => {
                 if (i == j) {
                     continue;
                 }
-                if (sqrDistance(object.position,other.position)<300) {
+                if (isColliding(object,other) && object.invincible_timer==0 && other.invincible_timer==0 && collide) {
                     let reacted = false;
                     for (let k = 0; k < parameters.reactions.length; k++) {
                         let reaction = parameters.reactions[k];
-                        if ((object.id==reaction.reagents[0] && other.id == reaction.reagents[1]) || (object.id==reaction.reagents[0] && other.id == reaction.reagents[1])) {
+                        if ((object.id==reaction.reactants[0] && other.id == reaction.reactants[1]) || (object.id==reaction.reactants[0] && other.id == reaction.reactants[1])) {
                             console.log("HI")
-                            reaction.reactants.forEach((reactant) => {
-                                molecularObjects.push(reactantWithAvgRand(object,other,reactant,10,5))
+                            reaction.products.forEach((product) => {
+                                let createdProduct = productWithAvgRand(object,other,product,10,5);
+                                console.log(Math.floor(600/temperature.value));
+                                createdProduct.invincible_timer=Math.floor(600/temperature.value);
+                                molecularObjects.push(createdProduct);
                             })
                             if (j<i) {
                                 molecularObjects.splice(i,1);
@@ -156,6 +197,7 @@ $$(".particleSimulator").forEach((sim) => {
                                 molecularObjects.splice(j,1);
                                 molecularObjects.splice(i,1);
                             }
+                            reactionCounts[k]++;
                             reacted = true;
                             break;
                         }
@@ -166,9 +208,10 @@ $$(".particleSimulator").forEach((sim) => {
                 }
             }
         }
+        // console.log(reactionCounts);
     }
-    render()
-    setInterval(() => {if (playing){render()}},1000/100);
+    render(false)
+    setInterval(() => {if (playing){render(true)}},1000/60);
 })
 
 
